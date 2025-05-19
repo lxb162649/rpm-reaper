@@ -9,6 +9,7 @@ source "./common/common_lib.sh"
 
 function pre_test() {
     # 日志文件
+    mkdir logs
     LOG_FILE="logs/cp_rpm.log"
     ERROR_FILE="logs/cp_rpm_errors.log"
     INSTALL
