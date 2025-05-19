@@ -87,26 +87,31 @@ function GET_REPOPATH(){
         REPOPATH="/var/www/html/myrepo"
         echo "仓库路径为：$REPOPATH" | tee -a "$LOG_FILE"
     fi
+    REPONAME=$(basename $REPOPATH)
 }
 function GET_IP(){
     DEFAULT_IF=$(ip route | grep default | awk '{print $5}')  # 获取默认网卡名
-    IP=$(ip -4 addr show "$DEFAULT_IF" | grep -oP '(?<=inet\s)\d+(\.\d+){3}') | tee -a "$LOG_FILE"
+    IP=$(ip -4 addr show "$DEFAULT_IF" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+    echo "本地IP：$IP" | tee -a "$LOG_FILE"
 }
 
 function CREATEREPO(){
-    if [ -n $repodata ]; then
-        createrepo --update $REPOPATH | tee -a "$LOG_FILE"
-        CHECK_RESULT $? 0 0 "更新仓库失败"
-    else
-        GET_IP
-        cat > /etc/yum.repos.d/myrepo << EOF
-[myrepo]
-name=myrepo
-baseurl=http://$IP/myrepo
+    GET_IP
+    if [ ! -f "/etc/yum.repos.d/$REPONAME.repo" ];then
+        cat > /etc/yum.repos.d/$REPONAME.repo << EOF
+[$REPONAME]
+name=$REPONAME
+baseurl=http://$IP/$REPONAME
 gpgcheck=0
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CYOS
+
 EOF
+    fi
+    if [ -n "$repodata" ]; then
+        createrepo --update $REPOPATH | tee -a "$LOG_FILE"
+        CHECK_RESULT $? 0 0 "更新仓库失败"
+    else
         createrepo $REPOPATH | tee -a "$LOG_FILE"
         CHECK_RESULT $? 0 0 "创建仓库失败"
     fi
