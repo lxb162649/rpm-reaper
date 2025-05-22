@@ -30,7 +30,7 @@ function pre_test() {
         echo "远程密码: $REMOTE_PASSWORD" | tee -a "$LOG_FILE"
     else
         # 本地 rpm 搜索地址
-        SEARCH_PATH=${1:-"/ -path /var/lib/mock -prune -o"}
+        SEARCH_PATH=${1:-"/ -path /var/lib/mock -prune -o -path /var/www/html -prune -o"}
     fi
     echo "本地 RPM 路径: $REPOPATH" | tee -a "$LOG_FILE"
     echo "rpm 搜索路径: $SEARCH_PATH" | tee -a "$LOG_FILE"
@@ -100,7 +100,6 @@ function run_test() {
         filename=$(basename "$remote_path")
         
         if [ -f $target_dir/$filename ]; then
-            echo "已存在 $filename，无需复制" | tee -a "$LOG_FILE"
             continue
         fi
 
