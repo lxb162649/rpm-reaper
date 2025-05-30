@@ -15,7 +15,7 @@ function help(){
 使用方法
 1.将本地的 rpm 包复制到本地指定目录下，并创建 yum 仓库
 
-参数1：远程 rpm 搜索地址（默认："/ -path '/var/lib/mock' -prune -o"）
+参数1：本地 rpm 搜索地址（默认："/ -path '/var/lib/mock' -prune -o"）
 
 ./copy_rpm.sh 参数1
 示例：
